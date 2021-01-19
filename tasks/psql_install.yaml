@@ -13,8 +13,8 @@
 - name: psql_install | install required postgresql packages
   dnf:
     name:
-      - postgresql12
-      - postgresql12-server
+      - "postgresql{{ postgres_version }}"
+      - "postgresql{{ postgres_version }}-server"
     state: present
   notify: postgres init db
 

@@ -1,11 +1,11 @@
 ---
 - name: postgres initialize databases
-  command: postgresql-12-setup initdb
+  command: "postgresql-{{ postgres_version }}-setup initdb"
   listen: 'postgres init db'
 
 - name: restart postgresql
   service:
-    name: postgresql-12
+    name: "postgresql-{{ postgres_version }}"
     state: restarted
     enabled: yes
   listen: 'postgres init db'
