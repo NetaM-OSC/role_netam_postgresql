@@ -14,9 +14,6 @@
   tags:
     - install
 
-- name: import postgresql init
-  import_tasks: psql_init.yml
-
 - name: import postgresql backup
   import_tasks: psql_backup.yml
   tags:
