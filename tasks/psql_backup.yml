@@ -1,0 +1,24 @@
+---
+- name: psql_backup | create folder tree
+  file:
+    path: '{{ d_netam_db_backup_base_dir }}/postgredump'
+    state: directory
+    owner: 'postgres'
+    group: 'postgres'
+    mode: '0700'
+
+- name: psql_backup | copy backup script
+  template:
+    src: backups/pgbackup.sh
+    dest: '{{ d_netam_db_backup_base_dir }}/pgbackup.sh'
+    owner: 'postgres'
+    group: 'postgres'
+    mode: '0700'
+
+- name: psql_backup | setup crontab
+  copy:
+    content: '00 20 * * * postgres /bin/bash {{ d_netam_db_backup_base_dir }}/pgbackup.sh'
+    dest: '/etc/cron.d/pgbackup'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'

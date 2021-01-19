@@ -1,0 +1,22 @@
+---
+- name: psql_install | add pgdb official repository
+  dnf:
+    name: "{{ v_pgdb_repo_url }}"
+    disable_gpg_check: true
+    state: present
+
+- name: psql_install | disable default postgres module
+  dnf:
+    name: '@postgresql'
+    state: absent
+
+- name: psql_install | install required postgresql packages
+  dnf:
+    name:
+      - postgresql12
+      - postgresql12-server
+    state: present
+  notify: postgres init db
+
+- name: psql_install | flush handlers
+  meta: flush_handlers

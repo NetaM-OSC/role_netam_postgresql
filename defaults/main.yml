@@ -1,0 +1,4 @@
+---
+d_netam_db_name: 'netam'
+d_netam_db_conn_limit: '1024'
+d_netam_db_backup_base_dir: '/usr/local/exploit'

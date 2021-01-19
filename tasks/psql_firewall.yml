@@ -1,0 +1,7 @@
+---
+- name: psql_firewall | open firewall for access to postgres
+  firewalld:
+    service: postgresql
+    permanent: yes
+    state: enabled
+    immediate: yes

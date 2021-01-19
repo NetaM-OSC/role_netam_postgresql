@@ -1,0 +1,7 @@
+# IDE files/folder
+/.idea
+/.vscode
+/.history
+/*\~
+/.*\~
+/tags

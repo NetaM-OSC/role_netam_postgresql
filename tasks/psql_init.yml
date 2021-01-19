@@ -1,0 +1,53 @@
+---
+- block:
+  - name: psql_init | create database
+    postgresql_db:
+      name: "{{ d_netam_db_name }}"
+      encoding: UTF-8
+      lc_collate: en_US.UTF-8
+      conn_limit: "{{ d_netam_db_conn_limit }}"
+    tags:
+      - install
+
+  - name: psql_init | create database user
+    postgresql_user:
+      db: "{{ d_netam_db_name }}"
+      name: "{{ netam_db_user }}"
+      password: "{{ netam_db_pass }}"
+      expires: infinity
+      priv: 'ALL'
+    tags:
+      - always
+
+  become: yes
+  become_user: postgres
+
+- name: psql_init | reconfigure postgresql engine
+  replace:
+    path: '/var/lib/pgsql/12/data/{{ item.file }}'
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.repl }}'
+    backup: yes
+  with_items:
+    - { file: 'postgresql.conf', regexp: 'max_connections = 100', repl: 'max_connections = {{ d_netam_db_conn_limit }}' }
+    - { file: 'postgresql.conf', regexp: "#listen_addresses = 'localhost'", repl: "listen_addresses = '0.0.0.0'" }
+    - { file: 'pg_hba.conf', regexp: 'host(\s+)all(\s+)all(\s+)127.0.0.1/32(\s+)ident', repl: 'host all all 127.0.0.1/32 md5' }
+    - { file: 'pg_hba.conf', regexp: 'host(\s+)all(\s+)all(\s+)::1/128(\s+)ident', repl: 'host all all ::1/128 md5' }
+  notify: restart postgresql
+  tags:
+    - install
+
+- name: psql_init | add specific entry for netam user in pg_hba
+  lineinfile:
+    path: '/var/lib/pgsql/12/data/pg_hba.conf'
+    regexp: 'host    {{ d_netam_db_name }}    {{ netam_db_user }}    0.0.0.0/0    md5'
+    line: 'host    {{ d_netam_db_name }}    {{ netam_db_user }}    0.0.0.0/0    md5'
+    backup: yes
+  notify: restart postgresql
+  tags:
+    - always
+
+- name: psql_init | flush handlers
+  meta: flush_handlers
+  tags:
+    - always

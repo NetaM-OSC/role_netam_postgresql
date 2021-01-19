@@ -1,0 +1,19 @@
+---
+- name: centos_prerequisites | stats dnf
+  stat:
+    path: /usr/bin/dnf
+  register: dnf_binary
+
+- name: centos_prerequisites | install required packages on centos 7
+  dnf:
+    name:
+      - python2-psycopg2
+      - libselinux-python
+    state: present
+  when:
+    - ansible_distribution_major_version|int == 7
+    - dnf_binary.stat.exists
+
+- name: centos_prerequisites | switch selinux to permissive
+  selinux:
+    state: disabled
