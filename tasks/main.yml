@@ -1,4 +1,8 @@
 ---
+# @todo feature: Move DB creation into NetAM-Core role
+# @todo improvement: Rework configurations to work with variables from group/host/inv variables to get full coherence with all roles
+# @todo improvement: Remove all tasks dedicated for NetAM-Core
+
 - name: import check os
   import_tasks: check_os.yml
   tags:
